@@ -32,7 +32,7 @@ def get_channel():
         global channel_url
         channel_url += sys.argv[1]
     else:
-        print "An error has occurred while trying to read arguments. Did you specify the channel?"
+        print("An error has occurred while trying to read arguments. Did you specify the channel?")
         sys.exit(1)
 
 
@@ -41,7 +41,7 @@ def get_proxies():
     try:
         lines = [line.rstrip("\n") for line in open("proxylist.txt")]
     except IOError as e:
-        print "An error has occurred while trying to read the list of proxies: %s" % e.strerror
+        print("An error has occurred while trying to read the list of proxies: %s" % e.strerror)
         sys.exit(1)
 
     return lines
@@ -54,16 +54,16 @@ def get_url():
             ["livestreamer.exe", "--http-header", "Client-ID=ewvlchtxgqq88ru9gmfp1gmyt6h2b93", 
             channel_url, "-j"], stdout=subprocess.PIPE).communicate()[0]
     except subprocess.CalledProcessError:
-        print "An error has occurred while trying to get the stream data. Is the channel online? Is the channel name correct?"
+        print("An error has occurred while trying to get the stream data. Is the channel online? Is the channel name correct?")
         sys.exit(1)
     except OSError:
-        print "An error has occurred while trying to use livestreamer package. Is it installed? Do you have Python in your PATH variable?"
+        print("An error has occurred while trying to use livestreamer package. Is it installed? Do you have Python in your PATH variable?")
 
     # Decoding the url to the worst quality of the stream
     try:
-        url = json.loads(response)['streams']['audio']['url']
+        url = json.loads(response.decode('utf-8'))['streams']['audio']['url']
     except (ValueError, KeyError):
-        print "An error has occurred while trying to get the stream data. Is the channel online? Is the channel name correct?"
+        print("An error has occurred while trying to get the stream data. Is the channel online? Is the channel name correct?")
         sys.exit(1)
 
     return url
@@ -75,12 +75,12 @@ def open_url(url, proxy):
         try:
             with requests.Session() as s:
                 response = s.head(url, proxies=proxy)
-            print "Sent HEAD request with %s" % proxy["http"]
+            print("Sent HEAD request with %s" % proxy["http"])
             time.sleep(20)
         except requests.exceptions.Timeout:
-            print "  Timeout error for %s" % proxy["http"]
+            print("  Timeout error for %s" % proxy["http"])
         except requests.exceptions.ConnectionError:
-            print "  Connection error for %s" % proxy["http"]
+            print("  Connection error for %s" % proxy["http"])
 
 
 def prepare_processes():
@@ -89,7 +89,7 @@ def prepare_processes():
     n = 0
 
     if len(proxies) < 1:
-        print "An error has occurred while preparing the process: Not enough proxy servers. Need at least 1 to function."
+        print("An error has occurred while preparing the process: Not enough proxy servers. Need at least 1 to function.")
         sys.exit(1)
 
     for proxy in proxies:
@@ -100,18 +100,18 @@ def prepare_processes():
                     "url": get_url(), "proxy": {
                         "http": proxy}}))
 
-        print '.',
+        print('.',)
 
-    print ''
+    print('')
 
 if __name__ == "__main__":
-    print "Obtaining the channel..."
+    print("Obtaining the channel...")
     get_channel()
-    print "Obtained the channel"
-    print "Preparing the processes..."
+    print("Obtained the channel")
+    print("Preparing the processes...")
     prepare_processes()
-    print "Prepared the processes"
-    print "Booting up the processes..."
+    print("Prepared the processes")
+    print("Booting up the processes...")
 
     # Timer multiplier
     n = 8
