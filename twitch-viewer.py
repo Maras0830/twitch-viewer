@@ -61,7 +61,7 @@ def get_url():
 
     # Decoding the url to the worst quality of the stream
     try:
-        url = json.loads(response.decode('utf-8'))['streams']['audio']['url']
+        url = json.loads(response.decode('utf-8'))['streams']['audio_only']['url']
     except (ValueError, KeyError):
         print("An error has occurred while trying to get the stream data. Is the channel online? Is the channel name correct?")
         sys.exit(1)
